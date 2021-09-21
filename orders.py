@@ -24,3 +24,11 @@ def get_orders(start_ordered, end_ordered, access_token):
     orders_data = json.loads(res.text)
 
     return orders_data['orders']
+
+
+def sum_of_earnings(orders):
+    earnings = 0
+    for order in orders:
+        earnings += order['total']
+
+    return earnings
