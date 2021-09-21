@@ -1,5 +1,8 @@
 import urllib.parse
+import requests
+import json
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from secret import CLIENT_ID, CLIENT_SECRET, CALLBACK_URL, \
     SCOPE, DRIVER_PATH, BASE_ID, BASE_PASSWORD
 
@@ -18,7 +21,10 @@ def get_authorize_code():
         '%SCOPE%', urllib.parse.quote(SCOPE)
     )
 
-    driver = webdriver.Chrome(DRIVER_PATH)
+    options = Options()
+    options.add_argument('--headless')
+
+    driver = webdriver.Chrome(DRIVER_PATH, chrome_options=options)
     driver.get(auth_url)
 
     elem_login_id = driver.find_element_by_id('UserMailAddress')
@@ -33,3 +39,22 @@ def get_authorize_code():
     driver.quit()
 
     return code
+
+
+def get_access_token():
+    auth_code = get_authorize_code()
+
+    req_path = 'https://api.thebase.in/1/oauth/token'
+
+    params = {
+        'grant_type': 'authorization_code',
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'code': auth_code,
+        'redirect_uri': CALLBACK_URL,
+    }
+
+    res = requests.post(req_path, params)
+    token_data = json.loads(res.text)
+
+    return token_data['access_token']
