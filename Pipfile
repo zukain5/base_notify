@@ -7,6 +7,7 @@ name = "pypi"
 requests = "*"
 selenium = "*"
 slackweb = "*"
+webdriver-manager = "*"
 
 [dev-packages]
 flake8 = "*"

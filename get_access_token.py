@@ -3,8 +3,9 @@ import requests
 import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from secret import CLIENT_ID, CLIENT_SECRET, CALLBACK_URL, \
-    SCOPE, DRIVER_PATH, BASE_ID, BASE_PASSWORD
+    SCOPE, BASE_ID, BASE_PASSWORD
 
 # 参考: https://rabbitfoot.xyz/baseapi-getproductlist-withpython-1/
 
@@ -24,7 +25,9 @@ def get_authorize_code():
     options = Options()
     options.add_argument('--headless')
 
-    driver = webdriver.Chrome(DRIVER_PATH, chrome_options=options)
+    driver = webdriver.Chrome(
+        ChromeDriverManager().install(), chrome_options=options
+    )
     driver.get(auth_url)
 
     elem_login_id = driver.find_element_by_id('UserMailAddress')
