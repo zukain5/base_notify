@@ -1,13 +1,13 @@
-import urllib.parse
-import requests
 import json
+import urllib.parse
+
+import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
-from secret import CLIENT_ID, CLIENT_SECRET, CALLBACK_URL, \
-    SCOPE, BASE_ID, BASE_PASSWORD
+from selenium.webdriver.common.by import By
 
-# 参考: https://rabbitfoot.xyz/baseapi-getproductlist-withpython-1/
+from secret import (BASE_ID, BASE_PASSWORD, CALLBACK_URL, CLIENT_ID,
+                    CLIENT_SECRET, SCOPE)
 
 GET_AUTH_URL = 'https://api.thebase.in/1/oauth/authorize?response_type=' \
     'code&client_id=%ID%&redirect_uri=%URI%&scope=%SCOPE%'
@@ -25,17 +25,15 @@ def get_authorize_code():
     options = Options()
     options.add_argument('--headless')
 
-    driver = webdriver.Chrome(
-        ChromeDriverManager().install(), chrome_options=options
-    )
+    driver = webdriver.Chrome(options=options)
     driver.get(auth_url)
 
-    elem_login_id = driver.find_element_by_id('UserMailAddress')
+    elem_login_id = driver.find_element(By.ID, 'UserMailAddress')
     elem_login_id.send_keys(BASE_ID)
-    elem_login_password = driver.find_element_by_id('UserPassword')
+    elem_login_password = driver.find_element(By.ID, 'UserPassword')
     elem_login_password.send_keys(BASE_PASSWORD)
 
-    elem_auth_button = driver.find_element_by_name('auth_yes')
+    elem_auth_button = driver.find_element(By.NAME, 'auth_yes')
     elem_auth_button.click()
 
     code = driver.current_url.split("=")[1]
